@@ -19,18 +19,18 @@ dataxmean <- datosx[ , grepl( "mean()" , names( datosx ) ) ] #Subsetting by colu
 dataxstd <- datosx[ , grepl( "std()" , names( datosx ) ) ]
 datosx <- cbind(dataxmean, dataxstd)
 
-subj_x <- rbind(x_train_sub, x_test_sub)
+subj_x <- rbind(x_train_sub, x_test_sub) #Adding subjects of study
 datosx <- cbind(subj_x, datosx)
 
-datosy <- rbind (y_train, y_test)
+datosy <- rbind (y_train, y_test) #Adding activities performed while measuring
 colnames(datosy) <- "Activity"
-
 for (i in 1:length(datosy$Activity)) {
         datosy[i,"Activity_Name"] <- act_labels[datosy[i,1],2]
-}
+} #Replacing the activities indexes by the actual name of the activity
 
-datos <- cbind(datosy, datosx) 
-datos$Activity <- NULL
-names(datos)[names(datos)=="V1"] <- "Subject"
+datos <- cbind(datosy, datosx) #Gathering all the formatted data together
+datos$Activity <- NULL #Deleting the activities indexes column
+names(datos)[names(datos)=="V1"] <- "Subject" #Naming subjects of study column
 
-final_data <- aggregate(. ~ Activity_Name + Subject ,data = datos,FUN=function(x) mean(x))
+final_data <- aggregate(. ~ Activity_Name + Subject ,data = datos,FUN=function(x) mean(x)) #Generation of final data frame
+write.table(final_data, file="final_data.txt",row.name=FALSE) #Writing the data frame on a file
